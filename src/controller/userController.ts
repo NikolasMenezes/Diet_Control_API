@@ -24,19 +24,19 @@ class UserController {
       if (e['code'] === "ER_DUP_ENTRY") {
         return res.status(400).json({ 'error': 'email already registred' })
       }
-      return res.status(500).json({ 'error': e });
+      return res.status(500).json({ 'error': e.message });
     }
   }
 
   async getUsers(req: Request, res: Response) {
 
     try {
-      const users = await userModel.selectUsers();
+      const [users] = await userModel.selectUsers();
 
       return res.status(200).json(users);
     }
     catch (e: any) {
-      return res.status(500).json({ 'error': e });
+      return res.status(500).json({ 'error': e.message });
     }
   }
 
@@ -45,12 +45,12 @@ class UserController {
     try {
       const id = req['params']['id']
 
-      const user = await userModel.selectUserById(id);
+      const [user] = await userModel.selectUserById(id);
 
       return res.status(200).json(user);
     }
     catch (e: any) {
-      return res.status(500).json({ 'error': e });
+      return res.status(500).json({ 'error': e.message });
     }
   }
 
@@ -69,7 +69,10 @@ class UserController {
       return res.status(200).json([]);
     }
     catch (e: any) {
-      return res.status(500).json({ 'error': e });
+      if (e.message === 'User not found') {
+        return res.status(400).json({ 'error': e.message });
+      }
+      return res.status(500).json({ 'error': e.message });
     }
 
   }
@@ -84,7 +87,7 @@ class UserController {
       return res.status(200).json([]);
     }
     catch (e: any) {
-      return res.status(500).json({ 'error': e });
+      return res.status(500).json({ 'error': e.message });
     }
   }
 }

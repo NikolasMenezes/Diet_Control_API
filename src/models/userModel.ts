@@ -35,16 +35,23 @@ export default class UserModel {
 
   }
 
-  async updateUser(id: string, user: User): Promise<User[]> {
+  async updateUser(id: string, user: User) {
 
     const { email, name, password, isPremium } = user;
 
     const query = 'UPDATE users SET name = ?, email = ?, password = ?, isPremium = ? WHERE id = ?';
 
-    const [userUpadted] = await connection.execute(query, [name, email, password, isPremium, id])
+    const userUpadted = await connection.execute(query, [name, email, password, isPremium, id])
 
-    return userUpadted as User[]
+    console.log(userUpadted as ResultSetHeader)
+    console.log([userUpadted])
 
+    // if (userUpadted > 0) {
+    //   throw new Error('User not found')
+    // }
+
+
+    return [userUpadted]
   }
 
   async removeUser(id: string) {
