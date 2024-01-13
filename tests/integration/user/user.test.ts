@@ -1,7 +1,7 @@
 import request from "supertest";
-import app from "../../src/app";
+import app from "../../../src/app";
 
-import { generateRandomString } from "../../src/utils/utils";
+import { generateRandomString } from "../../../src/utils/stringUtils";
 
 describe("Test all success cases for User endpoints", () => {
 

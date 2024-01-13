@@ -10,7 +10,7 @@ import { validateSentGroup } from "./middleware/foodGenerecisMiddleware";
 const router = express.Router()
 
 // User
-router.get('/user', userController.getUsers)
+router.get('/user/all', userController.getUsers)
 router.get('/user/:id', userController.getUserById)
 router.post('/user', userMiddleware, userController.postUser)
 router.put('/user/:id', userMiddleware, userController.putUser)

@@ -12,6 +12,8 @@ class UserController {
     try {
       const userData: User = req["body"];
 
+      userData.isPremium = userData.isPremium ?? false
+
       const newPassword = await authService.generateHashPassword(userData['password'])
 
       userData['password'] = newPassword
@@ -31,7 +33,7 @@ class UserController {
   async getUsers(req: Request, res: Response) {
 
     try {
-      const [users] = await userModel.selectUsers();
+      const users = await userModel.selectUsers();
 
       return res.status(200).json(users);
     }
@@ -45,7 +47,7 @@ class UserController {
     try {
       const id = req['params']['id']
 
-      const [user] = await userModel.selectUserById(id);
+      const [user] = await userModel.findById(id);
 
       return res.status(200).json(user);
     }
