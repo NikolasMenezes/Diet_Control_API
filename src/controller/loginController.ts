@@ -5,6 +5,7 @@ import { Login } from '../types/login'
 import { Request, Response } from 'express';
 
 import { SECRET_KEY } from '../constants';
+import { User } from '../interfaces/iUsers';
 
 const loginModel = new LoginModel()
 const authService = new AuthService()
@@ -13,30 +14,31 @@ const tokenService = new TokenService()
 class LoginController {
 
   async authenticate(req: Request, res: Response) {
-    // try {
-    //   const body: Login = req.body;
+    try {
+      const body: Login = req.body;
 
-    //   const password = await loginModel.getUserInfo(body.email)
+      const userCredentials = await loginModel.getUserInfo(body.email)
 
-    //   if (password.length <= 0) {
-    //     return res.status(401).json({ status: "Unauthorized" })
-    //   }
+      if (!userCredentials[0].password) {
+        return res.status(401).json({ status: "Unauthorized" })
+      }
 
-    //   const passwordIsCorrect = await authService.verifyPassword(body.password, String(password[0].password))
+      const passwordIsCorrect =
+        await authService.verifyPassword(body.password, userCredentials[0].password)
 
-    //   if (!passwordIsCorrect) {
-    //     return res.status(401).json({ status: "Unauthorized" })
-    //   }
+      if (!passwordIsCorrect) {
+        return res.status(401).json({ status: "Unauthorized" })
+      }
 
-    //   const token = await tokenService.generate(body, String(SECRET_KEY))
-    //   const tokenExpiration = new Date((new Date().getTime() + (24 * 60 * 60 * 1000))).getTime()
+      const token = await tokenService.generate(body, String(SECRET_KEY))
+      const tokenExpiration = new Date((new Date().getTime() + (24 * 60 * 60 * 1000))).getTime()
 
-    //   const response = { status: "success", token: token, expiresIn: tokenExpiration }
+      const response = { status: "success", token: token, expiresIn: tokenExpiration }
 
-    //   return res.status(200).json(response)
-    // } catch (e: any) {
-    //   return res.status(500).json({ 'error': e })
-    // }
+      return res.status(200).json(response)
+    } catch (e: any) {
+      return res.status(500).json({ 'error': e })
+    }
 
   }
 

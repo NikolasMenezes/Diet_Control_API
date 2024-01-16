@@ -1,27 +1,19 @@
 import { NextFunction, Request, Response } from "express"
+import { FoodGroupEnum } from "../enums/foodGroups"
+
+function isValidGroup(group: string) {
+  return Object.keys(FoodGroupEnum).map(group => group.toLowerCase()).includes(group)
+}
 
 export function validateSentGroup(req: Request, res: Response, next: NextFunction) {
-  const validFoodGroups = [
-    "cereais e derivados",
-    "verduras, hortaliças e derivados",
-    "gorduras e óleos",
-    "pescados e frutos do mar",
-    "carnes e derivados",
-    "leite e derivados",
-    "bebidas (alcoólicas e não alcoólicas)",
-    "ovos e derivados",
-    "produtos açucarados",
-    "miscelâneas",
-    "outros alimentos industrializados",
-    "alimentos preparados",
-    "leguminosas e derivados"
-  ]
+  const sentGroup = req.query.group as string
 
-  const sentGroup = req.body.group as string
   if (!sentGroup) {
     return res.status(400).json({ error: "Group parameter is required" })
   }
-  if (!validFoodGroups.includes(sentGroup.toLowerCase())) {
+  const lowerCaseSentGroup = sentGroup.toLowerCase();
+
+  if (!isValidGroup(lowerCaseSentGroup)) {
     return res.status(400).json({ error: "Group not Valid" })
   }
 

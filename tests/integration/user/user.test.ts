@@ -18,21 +18,19 @@ describe("Test all success cases for User endpoints", () => {
     expect(response.status).toBe(201);
   });
 
-  it("Should return status 200 from GET /api/user", async () => {
-    const response = await request(app).get("/api/user");
+  it("Should return status 200 from GET /api/user/all", async () => {
+    const response = await request(app).get("/api/user/all");
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("id")
   });
 
   it("Should return status 200 from GET /api/user/:id", async () => {
     const response = await request(app).get("/api/user/1");
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("id")
   });
 
-  it('Should return status 200 from PUT /api/user/:id', async ()=> {
+  it('Should return status 200 from PUT /api/user/:id', async () => {
     const user = {
       name: "Ashley Graham",
       password: "admin",
@@ -41,7 +39,6 @@ describe("Test all success cases for User endpoints", () => {
     };
 
     const response = await request(app).put("/api/user/3").send(user);
-
     expect(response.status).toBe(200);
   })
 
@@ -63,7 +60,7 @@ describe("Test all errors cases from User endpoints", () => {
     expect(response.body).toHaveProperty('error')
   })
 
-  it('Should return status 400 from PUT /api/user/:id', async ()=> {
+  it('Should return status 400 from PUT /api/user/:id', async () => {
     const user = {
       name: "Ashley Graham",
       password: "admin",

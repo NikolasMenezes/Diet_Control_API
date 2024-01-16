@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { SECRET_KEY } from '../constants';
 import FoodGenericsModel from '../models/foodGenerics';
 import TokenService from '../service/tokenService';
+import { FoodGroupEnum } from '../enums/foodGroups';
 
 const tokenService = new TokenService()
 const foodGenericsModel = new FoodGenericsModel()
@@ -9,7 +10,7 @@ const foodGenericsModel = new FoodGenericsModel()
 class FoodGenericsController {
   async getAll(req: Request, res: Response) {
     try {
-      const info = await foodGenericsModel.getAll()
+      const [info] = await foodGenericsModel.getAll()
 
       return res.status(200).json(info)
     } catch (e: any) {
@@ -20,7 +21,9 @@ class FoodGenericsController {
     try {
       const sentGroup = req.query.group as string
 
-      const foodInfo = await foodGenericsModel.getByGroup(sentGroup)
+      const groupCompleteName = FoodGroupEnum[sentGroup as keyof typeof FoodGroupEnum];
+
+      const foodInfo = await foodGenericsModel.getByGroup(groupCompleteName)
 
       return res.status(200).json(foodInfo)
     } catch (e: any) {

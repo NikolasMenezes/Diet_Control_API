@@ -1,4 +1,4 @@
-import connection from './connection'
+import connection from '../database/connection'
 import { UserBasics } from '../interfaces/iUsers'
 
 export default class UserBasicsModel {

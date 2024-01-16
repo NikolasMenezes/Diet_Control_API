@@ -1,31 +1,29 @@
-import connection from "./connection";
+import connection from "../database/connection";
 
 import { User } from "../interfaces/iUsers";
 import { ResultSetHeader } from "mysql2/promise";
 
 export default class UserModel {
-  async createUser(user: User) {
+  async createUser(user: User): Promise<ResultSetHeader[]> {
     const { name, password, email, isPremium } = user;
 
     const query =
       "INSERT INTO users(name, email, password, isPremium) VALUES (?, ?, ?, ?)";
 
-    const [newUser] = await connection.execute(query, [
+    const newUser = await connection.execute(query, [
       name,
       email,
       password,
       isPremium,
     ]);
-    console.log(newUser)
-    return newUser;
+
+    return newUser as ResultSetHeader[];
   }
 
   async selectUsers(): Promise<ResultSetHeader[]> {
     const query = "SELECT id, name, email, isPremium FROM users ";
 
     const [users] = await connection.execute(query);
-
-    console.log(users)
 
     return users as ResultSetHeader[];
   }
@@ -38,7 +36,7 @@ export default class UserModel {
     return user as ResultSetHeader[];
   }
 
-  async updateUser(id: string, user: User): Promise<ResultSetHeader> {
+  async updateUser(id: string, user: Partial<User>): Promise<ResultSetHeader[]> {
     const { email, name, password, isPremium } = user;
 
     const query =
@@ -58,14 +56,14 @@ export default class UserModel {
       throw new Error("User not found");
     }
 
-    return userUpdated as ResultSetHeader;
+    return userUpdated as ResultSetHeader[];
   }
 
-  async removeUser(id: string) {
+  async removeUser(id: string): Promise<ResultSetHeader[]> {
     const query = "DELETE FROM users WHERE id = ?";
 
     const [user] = await connection.execute(query, [id]);
 
-    return user;
+    return user as ResultSetHeader[];
   }
 }

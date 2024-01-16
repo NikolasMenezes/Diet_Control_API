@@ -9,9 +9,8 @@ class BasicsController {
   async storeUserBasics(req: Request, res: Response) {
 
     try {
-
-      const id = req['params']['id']
-      const data: UserBasics = req['body']
+      const id = req.params.id
+      const data: UserBasics = req.body
 
       await basicsModel.insertUserBasics(id, data)
 
@@ -26,7 +25,7 @@ class BasicsController {
   async getUserBasics(req: Request, res: Response) {
 
     try {
-      const id = req['params']['id']
+      const id = req.params.id
 
       const user = await basicsModel.selectUserBasics(id)
 
@@ -42,8 +41,8 @@ class BasicsController {
 
     try {
 
-      const id = req['params']['id']
-      const data: UserBasics = req['body']
+      const id = req.params.id
+      const data: UserBasics = req.body
 
       await basicsModel.updateUserBasics(id, data)
 
