@@ -29,9 +29,19 @@ class FoodGenericsController {
     } catch (e: any) {
       return res.status(500).json({ 'Status': "Internal server Error!" })
     }
-
-
   }
+  async getById(req: Request, res: Response) {
+    try {
+      const id = req.params.id
+
+      const foodInfo = await foodGenericsModel.getbyId(id)
+
+      return res.status(200).json(foodInfo)
+    } catch (e: any) {
+      return res.status(500).json({ 'Status': "Internal server Error!" })
+    }
+  }
+
 }
 
 export const foodGenericsController = new FoodGenericsController()

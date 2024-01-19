@@ -4221,16 +4221,18 @@ VALUES (
 CREATE TABLE
     IF NOT EXISTS meals (
         id INT PRIMARY KEY AUTO_INCREMENT,
-        meal_name VARCHAR(100) NOT NULL
+        name VARCHAR(100) NOT NULL
     );
 
 CREATE TABLE
-    IF NOT EXISTS meal_food (
+    IF NOT EXISTS user_meals_foods (
         meal_id INT,
         food_id INT,
         user_id INT,
         FOREIGN KEY (meal_id) REFERENCES meals(id),
         FOREIGN KEY (food_id) REFERENCES food_generics(id),
-        -- Assuming you have a 'food_generics' table
         FOREIGN KEY (user_id) REFERENCES users(id)
     );
+
+ALTER TABLE meals ADD COLUMN description VARCHAR(255) NOT NULL DEFAULT 'no description';
+ALTER TABLE meals ADD COLUMN calories DOUBLE NOT NULL DEFAULT 0;

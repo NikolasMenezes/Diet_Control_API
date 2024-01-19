@@ -22,4 +22,13 @@ export default class FoodGenericsModel {
     return food_generics as FoodGenerics[]
   }
 
+  async getbyId(id: number | string): Promise<any> {
+
+    const query = "SELECT * FROM food_generics WHERE id = ?"
+
+    const [food_generics] = await connection.execute(query, [id])
+
+    return food_generics
+  }
+
 }

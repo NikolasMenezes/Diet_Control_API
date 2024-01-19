@@ -7,6 +7,8 @@ import { jwtValidationMiddleware } from "./middleware/jwtValidatorMiddleware";
 import { foodGenericsController } from "./controller/foodGenericsController";
 import { validateSentGroup } from "./middleware/foodGenerecisMiddleware";
 import { verifyUserBasicInfoFields } from "./middleware/userBasicInfoMiddleware";
+import { mealController } from "./controller/mealController";
+import { verifyMealFields } from "./middleware/mealsMiddleware";
 
 const router = express.Router()
 
@@ -18,9 +20,9 @@ router.put('/user/:id', userMiddleware, userController.putUser)
 router.delete('/user/:id', userController.deleteUser)
 
 // User Basic informations
-router.get('/user/info/:id', basicsController.getUserBasics)
-router.post('/user/info/:id', verifyUserBasicInfoFields, basicsController.storeUserBasics)
-router.put('/user/info/:id', verifyUserBasicInfoFields, basicsController.putUserBasics)
+router.get('/user/info/:id', jwtValidationMiddleware, basicsController.getUserBasics)
+router.post('/user/info/:id', jwtValidationMiddleware, verifyUserBasicInfoFields, basicsController.storeUserBasics)
+router.put('/user/info/:id', jwtValidationMiddleware, verifyUserBasicInfoFields, basicsController.putUserBasics)
 
 // Login
 router.post('/login', loginController.authenticate)
@@ -28,6 +30,10 @@ router.post('/login', loginController.authenticate)
 // Food Generics
 router.get("/food/all", jwtValidationMiddleware, foodGenericsController.getAll)
 router.get("/food", jwtValidationMiddleware, validateSentGroup, foodGenericsController.getByGroup)
+router.get("/food/:id", jwtValidationMiddleware, validateSentGroup, foodGenericsController.getById)
+
+// Meals 
+router.post("/meal", jwtValidationMiddleware, verifyMealFields, mealController.postMeal)
 
 
 export default router
