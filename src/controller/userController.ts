@@ -26,7 +26,7 @@ class UserController {
       if (e["code"] === "ER_DUP_ENTRY") {
         return res.status(400).json({ error: "email already registred" });
       }
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ 'Status': "Internal server Error!" });
     }
   }
 
@@ -48,7 +48,7 @@ class UserController {
 
       return res.status(200).json(user);
     } catch (e: any) {
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ 'Status': "Internal server Error!" });
     }
   }
 
@@ -72,7 +72,7 @@ class UserController {
       if (e.message === "User not found") {
         return res.status(400).json({ error: e.message });
       }
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ 'Status': "Internal server Error!" });
     }
   }
 
@@ -84,7 +84,7 @@ class UserController {
 
       return res.status(200).json([]);
     } catch (e: any) {
-      return res.status(500).json({ error: e.message });
+      return res.status(500).json({ 'Status': "Internal server Error!" });
     }
   }
 }

@@ -14,7 +14,7 @@ class FoodGenericsController {
 
       return res.status(200).json(info)
     } catch (e: any) {
-      return res.status(500).json(e.message)
+      return res.status(500).json({ 'Status': "Internal server Error!" })
     }
   }
   async getByGroup(req: Request, res: Response) {
@@ -27,7 +27,7 @@ class FoodGenericsController {
 
       return res.status(200).json(foodInfo)
     } catch (e: any) {
-      return res.status(500).json({ error: e.message })
+      return res.status(500).json({ 'Status': "Internal server Error!" })
     }
 
 

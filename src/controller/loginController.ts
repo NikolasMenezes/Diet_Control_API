@@ -37,7 +37,7 @@ class LoginController {
 
       return res.status(200).json(response)
     } catch (e: any) {
-      return res.status(500).json({ 'error': e })
+      return res.status(500).json({ 'Status': "Internal server Error!" })
     }
 
   }

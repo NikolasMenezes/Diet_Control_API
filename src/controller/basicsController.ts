@@ -17,7 +17,7 @@ class BasicsController {
       return res.status(200).json([])
 
     } catch (e) {
-      return res.status(500).json({ 'error': e })
+      return res.status(500).json({ 'Status': "Internal server Error!" })
     }
 
   }
@@ -32,7 +32,7 @@ class BasicsController {
       return res.status(200).json(user)
 
     } catch (e) {
-      return res.status(500).json({ 'error': e })
+      return res.status(500).json({ 'Status': "Internal server Error!" })
     }
 
   }
@@ -49,7 +49,7 @@ class BasicsController {
       return res.status(200).json([])
 
     } catch (e) {
-      return res.status(500).json({ 'error': e })
+      return res.status(500).json({ 'Status': "Internal server Error!" })
     }
 
   }

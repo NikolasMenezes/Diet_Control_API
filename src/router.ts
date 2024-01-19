@@ -6,6 +6,7 @@ import { loginController } from "./controller/loginController";
 import { jwtValidationMiddleware } from "./middleware/jwtValidatorMiddleware";
 import { foodGenericsController } from "./controller/foodGenericsController";
 import { validateSentGroup } from "./middleware/foodGenerecisMiddleware";
+import { verifyUserBasicInfoFields } from "./middleware/userBasicInfoMiddleware";
 
 const router = express.Router()
 
@@ -18,8 +19,8 @@ router.delete('/user/:id', userController.deleteUser)
 
 // User Basic informations
 router.get('/user/info/:id', basicsController.getUserBasics)
-router.post('/user/info/:id', basicsController.storeUserBasics)
-router.put('/user/info/:id', basicsController.putUserBasics)
+router.post('/user/info/:id', verifyUserBasicInfoFields, basicsController.storeUserBasics)
+router.put('/user/info/:id', verifyUserBasicInfoFields, basicsController.putUserBasics)
 
 // Login
 router.post('/login', loginController.authenticate)
