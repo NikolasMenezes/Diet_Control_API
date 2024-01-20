@@ -4221,18 +4221,17 @@ VALUES (
 CREATE TABLE
     IF NOT EXISTS meals (
         id INT PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(100) NOT NULL
+        name VARCHAR(100) NOT NULL,
+        description varchar(255) not null default "no description",
+        calories DOUBLE NOT NULL DEFAULT 0,
+        user_id int not null,
+        foreign key (user_id) references users(id) on delete cascade
     );
-
+    
 CREATE TABLE
-    IF NOT EXISTS user_meals_foods (
-        meal_id INT,
-        food_id INT,
-        user_id INT,
-        FOREIGN KEY (meal_id) REFERENCES meals(id),
-        FOREIGN KEY (food_id) REFERENCES food_generics(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+    IF NOT EXISTS meals_foods(
+	meal_id int not null,
+    food_id int not null,
+    foreign key (meal_id) references meals(id) on delete cascade,
+    foreign key (food_id) references food_generics(id) on delete cascade
     );
-
-ALTER TABLE meals ADD COLUMN description VARCHAR(255) NOT NULL DEFAULT 'no description';
-ALTER TABLE meals ADD COLUMN calories DOUBLE NOT NULL DEFAULT 0;

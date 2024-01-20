@@ -33,7 +33,13 @@ router.get("/food", jwtValidationMiddleware, validateSentGroup, foodGenericsCont
 router.get("/food/:id", jwtValidationMiddleware, validateSentGroup, foodGenericsController.getById)
 
 // Meals 
+router.get("/meal/user", jwtValidationMiddleware, mealController.getMealsUserId);
+router.get("/meal/:id", jwtValidationMiddleware, mealController.getMealById);
 router.post("/meal", jwtValidationMiddleware, verifyMealFields, mealController.postMeal)
+router.post("/meal/:id/food", jwtValidationMiddleware, mealController.addFoodToMeal)
+router.put("/meal/:id", jwtValidationMiddleware, verifyMealFields, mealController.putMeal)
+router.delete("/meal/:id", jwtValidationMiddleware, mealController.deleteMealById)
+router.delete("/meal/:meal_id/food/:food_id", jwtValidationMiddleware, mealController.deleteFoodFromMeal)
 
 
 export default router

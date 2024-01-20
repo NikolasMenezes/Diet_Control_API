@@ -1,15 +1,15 @@
 import LoginModel from '../models/loginModel';
 import AuthService from '../service/authService';
 import TokenService from '../service/tokenService';
-import { Login } from '../types/login'
 import { Request, Response } from 'express';
 
 import { SECRET_KEY } from '../constants';
-import { User } from '../interfaces/iUsers';
 
 const loginModel = new LoginModel()
 const authService = new AuthService()
 const tokenService = new TokenService()
+
+type Login = { email: string, password: string }
 
 class LoginController {
 
