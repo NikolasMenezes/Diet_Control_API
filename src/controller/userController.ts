@@ -9,17 +9,11 @@ const authService = new AuthService();
 class UserController {
   async postUser(req: Request, res: Response) {
     try {
-      const userData: User = req.body;
+      const { email, isPremium, name, password }: User = req.body;
 
-      userData.isPremium = userData.isPremium ?? false;
+      const hashPassword = await authService.generateHashPassword(password);
 
-      const newPassword = await authService.generateHashPassword(
-        userData.password
-      );
-
-      userData.password = newPassword;
-
-      await userModel.createUser(userData);
+      await userModel.createUser({ email, isPremium, name, password: hashPassword } as User);
 
       return res.status(201).json([]);
     } catch (e: any) {
@@ -39,39 +33,27 @@ class UserController {
       return res.status(500).json({ error: e.message });
     }
   }
-
   async getUserById(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const users = await userModel.findById(id);
 
-      const user = await userModel.findById(id);
-
-      return res.status(200).json(user);
+      return res.status(200).json(users);
     } catch (e: any) {
-      return res.status(500).json({ 'Status': "Internal server Error!" });
+      return res.status(500).json({ error: e.message });
     }
   }
 
-  async putUser(req: Request, res: Response) {
+  async updateUser(req: Request, res: Response) {
     try {
       const id = req.params.id;
       const userData: Partial<User> = req.body;
-      let newPassword;
-      if (userData.password) {
-        newPassword = await authService.generateHashPassword(
-          userData.password
-        );
 
-        userData.password = newPassword;
-      }
+      const user = await userModel.updateUser(id, userData);
 
-      await userModel.updateUser(id, userData);
-
-      return res.status(200).json([]);
+      return res.status(200).json(user);
     } catch (e: any) {
-      if (e.message === "User not found") {
-        return res.status(400).json({ error: e.message });
-      }
+      console.log(e.message)
       return res.status(500).json({ 'Status': "Internal server Error!" });
     }
   }
@@ -80,7 +62,7 @@ class UserController {
     try {
       const id = req.params.id;
 
-      await userModel.removeUser(id);
+      await userModel.deleteUser(id);
 
       return res.status(200).json([]);
     } catch (e: any) {

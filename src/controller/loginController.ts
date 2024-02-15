@@ -19,7 +19,7 @@ class LoginController {
 
       const userCredentials = await loginModel.getUserInfo(body.email)
 
-      if (!userCredentials[0].password) {
+      if (userCredentials) {
         return res.status(401).json({ status: "Unauthorized" })
       }
 
@@ -37,6 +37,7 @@ class LoginController {
 
       return res.status(200).json(response)
     } catch (e: any) {
+      console.log(e)
       return res.status(500).json({ 'Status': "Internal server Error!" })
     }
 

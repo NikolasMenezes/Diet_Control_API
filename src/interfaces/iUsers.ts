@@ -1,16 +1,16 @@
 import { RowDataPacket } from "mysql2"
 
-export interface User extends RowDataPacket{
+export interface User extends RowDataPacket {
   id?: number,
-  name: string,
+  name: string | null,
   password: any,
   email: string,
-  isPremium?: boolean,
+  isPremium: boolean,
   created_at?: string,
   updated_at?: string
 }
 
-export interface UserBasics extends RowDataPacket{
+export interface UserBasics extends RowDataPacket {
   id?: number,
   user_id?: number,
   height: number,

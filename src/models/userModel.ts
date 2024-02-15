@@ -1,69 +1,33 @@
-import connection from "../database/connection";
-
-import { User } from "../interfaces/iUsers";
+import BaseModel from "./baseModel";
+import type { User } from "../interfaces/iUsers";
 import { ResultSetHeader } from "mysql2/promise";
 
-export default class UserModel {
-  async createUser(user: User): Promise<ResultSetHeader[]> {
-    const { name, password, email, isPremium } = user;
+export default class UserModel extends BaseModel {
 
-    const query =
-      "INSERT INTO users(name, email, password, isPremium) VALUES (?, ?, ?, ?)";
-
-    const newUser = await connection.execute(query, [
-      name,
-      email,
-      password,
-      isPremium,
-    ]);
-
-    return newUser as ResultSetHeader[];
+  public async selectUsers(): Promise<ResultSetHeader[]> {
+    return await this.execute("SELECT id, name, email, isPremium FROM users");
   }
 
-  async selectUsers(): Promise<ResultSetHeader[]> {
-    const query = "SELECT id, name, email, isPremium FROM users ";
-
-    const [users] = await connection.execute(query);
-
-    return users as ResultSetHeader[];
+  public async findById(id: string): Promise<ResultSetHeader[]> {
+    return await this.execute("SELECT id, name, email, isPremium FROM users where id = ?", id);
   }
 
-  async findById(id: string): Promise<ResultSetHeader[]> {
-    const query = "SELECT id, name, email, isPremium FROM users WHERE id = ?";
-
-    const [user] = await connection.execute(query, [id]);
-
-    return user as ResultSetHeader[];
+  public async createUser({ name, email, password, isPremium }: User): Promise<ResultSetHeader[]> {
+    return await this.execute(
+      "INSERT INTO users(name, email, password, isPremium) VALUES (?, ?, ?, ?)",
+      name, email, password, isPremium
+    );
   }
 
-  async updateUser(id: string, user: Partial<User>): Promise<ResultSetHeader[]> {
-    const { email, name, password, isPremium } = user;
-
-    const query =
-      "UPDATE users SET name = ?, email = ?, password = ?, isPremium = ? WHERE id = ?";
-
-    const [userUpdated] = await connection.execute(query, [
-      name,
-      email,
-      password,
-      isPremium,
-      id,
-    ]);
-
-    const affectedRows = (userUpdated as ResultSetHeader).affectedRows;
-
-    if (affectedRows <= 0) {
-      throw new Error("User not found");
-    }
-
-    return userUpdated as ResultSetHeader[];
+  public async deleteUser(id: string): Promise<ResultSetHeader[]> {
+    return await this.execute("DELETE FROM users WHERE id = ?", id);
   }
 
-  async removeUser(id: string): Promise<ResultSetHeader[]> {
-    const query = "DELETE FROM users WHERE id = ?";
-
-    const [user] = await connection.execute(query, [id]);
-
-    return user as ResultSetHeader[];
+  async updateUser(id: string, { email, name, isPremium }: Partial<User>): Promise<ResultSetHeader[]> {
+    return await this.execute(
+      "UPDATE users SET name = IFNULL(?, name), email = IFNULL(?, email), isPremium = IFNULL(?, isPremium) WHERE id = ?",
+      name ?? null, email ?? null, isPremium ?? null, id
+    );
   }
+
 }

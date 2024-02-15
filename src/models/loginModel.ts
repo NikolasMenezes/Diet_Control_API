@@ -1,8 +1,6 @@
 import { User } from "../interfaces/iUsers";
 import connection from "../database/connection";
 
-import { ResultSetHeader } from "mysql2/promise";
-
 export default class LoginModel {
 
   async getUserInfo(email: string): Promise<Partial<User>[]> {

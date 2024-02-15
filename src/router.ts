@@ -16,7 +16,7 @@ const router = express.Router()
 router.get('/user/all', userController.getUsers)
 router.get('/user/:id', userController.getUserById)
 router.post('/user', userMiddleware, userController.postUser)
-router.put('/user/:id', userMiddleware, userController.putUser)
+router.patch('/user/:id', userController.updateUser)
 router.delete('/user/:id', userController.deleteUser)
 
 // User Basic informations
