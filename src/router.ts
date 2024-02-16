@@ -13,11 +13,11 @@ import { verifyMealFields } from "./middleware/mealsMiddleware";
 const router = express.Router()
 
 // User
-router.get('/user/all', userController.getUsers)
-router.get('/user/:id', userController.getUserById)
+router.get('/user/all', jwtValidationMiddleware, userController.getUsers)
+router.get('/user/:id', jwtValidationMiddleware, userController.getUserById)
 router.post('/user', userMiddleware, userController.postUser)
-router.patch('/user/:id', userController.updateUser)
-router.delete('/user/:id', userController.deleteUser)
+router.patch('/user/:id', jwtValidationMiddleware, userController.updateUser)
+router.delete('/user/:id', jwtValidationMiddleware, userController.deleteUser)
 
 // User Basic informations
 router.get('/user/info/:id', jwtValidationMiddleware, userBasicInfoController.getUserBasicInfo)
