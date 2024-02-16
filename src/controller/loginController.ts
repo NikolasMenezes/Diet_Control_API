@@ -28,20 +28,15 @@ class LoginController {
       if (!passwordIsCorrect) {
         return res.status(401).json({ status: "Unauthorized" });
       }
-      const { token, tokenExpiration } = this.generateToken({ email, password });
+      const token = await tokenService.generate({ email, password }, String(SECRET_KEY));
+      const tokenExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getTime();
+
 
       return res.status(200).json({ status: "success", token, expiresIn: tokenExpiration });
     } catch (e: any) {
       console.error(e);
       return res.status(500).json({ 'Status': "Internal server Error!" });
     }
-  }
-
-  private generateToken(payload: { email: string, password: string }) {
-    const token = tokenService.generate(payload, String(SECRET_KEY));
-    const tokenExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getTime();
-
-    return { token, tokenExpiration };
   }
 }
 
