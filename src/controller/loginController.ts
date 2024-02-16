@@ -1,49 +1,48 @@
-import LoginModel from '../models/loginModel';
+import type { Request, Response } from 'express';
+
 import AuthService from '../service/authService';
 import TokenService from '../service/tokenService';
-import { Request, Response } from 'express';
+import UserModel from '../models/userModel';
 
 import { SECRET_KEY } from '../constants';
+import type { User } from '../interfaces/iUser';
 
-const loginModel = new LoginModel()
+const userModel = new UserModel()
 const authService = new AuthService()
 const tokenService = new TokenService()
-
 type Login = { email: string, password: string }
 
 class LoginController {
-
-  async authenticate(req: Request, res: Response) {
+  public async login(req: Request, res: Response) {
     try {
-      const body: Login = req.body;
+      const { email, password }: Login = req.body;
+      const userInfo = await userModel.findByEmail(email);
 
-      const userCredentials = await loginModel.getUserInfo(body.email)
-
-      if (userCredentials) {
-        return res.status(401).json({ status: "Unauthorized" })
+      if (!userInfo) {
+        return res.status(401).json({ status: "Unauthorized" });
       }
+      const hashPassword = (userInfo[0] as unknown as User).password;
 
-      const passwordIsCorrect =
-        await authService.verifyPassword(body.password, userCredentials[0].password)
+      const passwordIsCorrect = await authService.verifyPassword(password, hashPassword);
 
       if (!passwordIsCorrect) {
-        return res.status(401).json({ status: "Unauthorized" })
+        return res.status(401).json({ status: "Unauthorized" });
       }
+      const { token, tokenExpiration } = this.generateToken({ email, password });
 
-      const token = await tokenService.generate(body, String(SECRET_KEY))
-      const tokenExpiration = new Date((new Date().getTime() + (24 * 60 * 60 * 1000))).getTime()
-
-      const response = { status: "success", token: token, expiresIn: tokenExpiration }
-
-      return res.status(200).json(response)
+      return res.status(200).json({ status: "success", token, expiresIn: tokenExpiration });
     } catch (e: any) {
-      console.log(e)
-      return res.status(500).json({ 'Status': "Internal server Error!" })
+      console.error(e);
+      return res.status(500).json({ 'Status': "Internal server Error!" });
     }
-
   }
 
+  private generateToken(payload: { email: string, password: string }) {
+    const token = tokenService.generate(payload, String(SECRET_KEY));
+    const tokenExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getTime();
 
+    return { token, tokenExpiration };
+  }
 }
 
 export const loginController = new LoginController()

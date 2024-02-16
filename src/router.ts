@@ -1,7 +1,7 @@
 import express from "express";
 import { userMiddleware } from './middleware/userMiddleware'
 import { userController } from "./controller/userController";
-import { basicsController } from "./controller/basicsController";
+import { userBasicInfoController } from "./controller/userBasicInfoController";
 import { loginController } from "./controller/loginController";
 import { jwtValidationMiddleware } from "./middleware/jwtValidatorMiddleware";
 import { foodGenericsController } from "./controller/foodGenericsController";
@@ -20,12 +20,12 @@ router.patch('/user/:id', userController.updateUser)
 router.delete('/user/:id', userController.deleteUser)
 
 // User Basic informations
-router.get('/user/info/:id', jwtValidationMiddleware, basicsController.getUserBasics)
-router.post('/user/info/:id', jwtValidationMiddleware, verifyUserBasicInfoFields, basicsController.storeUserBasics)
-router.put('/user/info/:id', jwtValidationMiddleware, verifyUserBasicInfoFields, basicsController.putUserBasics)
+router.get('/user/info/:id', jwtValidationMiddleware, userBasicInfoController.getUserBasicInfo)
+router.post('/user/info/:id', jwtValidationMiddleware, verifyUserBasicInfoFields, userBasicInfoController.storeUserBasics)
+router.patch('/user/info/:id', jwtValidationMiddleware, userBasicInfoController.updateUserBasicInfo)
 
 // Login
-router.post('/login', loginController.authenticate)
+router.post('/login', loginController.login)
 
 // Food Generics
 router.get("/food/all", jwtValidationMiddleware, foodGenericsController.getAll)

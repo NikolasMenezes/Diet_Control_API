@@ -10,7 +10,7 @@ export interface User extends RowDataPacket {
   updated_at?: string
 }
 
-export interface UserBasics extends RowDataPacket {
+export interface UserInfo extends RowDataPacket {
   id?: number,
   user_id?: number,
   height: number,

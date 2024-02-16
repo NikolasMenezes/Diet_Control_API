@@ -1,7 +1,7 @@
 import UserModel from "../models/userModel";
 import AuthService from "../service/authService";
 import { Request, Response } from "express";
-import { User } from "../interfaces/iUsers";
+import { User } from "../interfaces/iUser";
 
 const userModel = new UserModel();
 const authService = new AuthService();

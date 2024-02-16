@@ -1,8 +1,8 @@
+import FoodGenericsModel from '../models/foodGenericsModel';
 import MealModel from '../models/mealModel';
-import { Request, Response } from "express";
-import { Meal } from "../interfaces/iMeals";
-import FoodGenericsModel from '../models/foodGenerics';
 import { calcuteMealCalories } from '../utils/calcuteMealCalories';
+import type { Request, Response } from "express";
+import type { Meal } from "../interfaces/iMeal";
 
 const mealModel = new MealModel();
 const foodGenericsModel = new FoodGenericsModel();
@@ -18,15 +18,11 @@ class MealController {
       const foodsInfo = [];
 
       for (const id of foods_id) {
-        const [food] = await foodGenericsModel.getbyId(id);
+        const [food] = await foodGenericsModel.findbyId(id);
         foodsInfo.push(food)
       }
 
       const calories = calcuteMealCalories(foodsInfo);
-
-      if (!user_id) {
-        return res.status(400).json({ 'Status': 'User id is required!' })
-      }
 
       const newMeal = await mealModel.createMeal({ user_id, name, description, calories }, foods_id);
 
@@ -93,7 +89,7 @@ class MealController {
     try {
       await mealModel.deleteFoodFromMeal(mealId, foodId);
 
-      const foodInfo = await foodGenericsModel.getbyId(foodId);
+      const foodInfo = await foodGenericsModel.findbyId(foodId);
 
       const mealCurrentCalories = await mealModel.getMealCalories(mealId);
 
@@ -117,13 +113,13 @@ class MealController {
       const mealCurrentCalories = await mealModel.getMealCalories(meal_id);
 
       if (typeof food_id === 'number') {
-        const foodInfo = await foodGenericsModel.getbyId(food_id);
+        const foodInfo = await foodGenericsModel.findbyId(food_id);
         await mealModel.upadteMealCalories(meal_id, Number((mealCurrentCalories + foodInfo[0].kcal).toFixed(2)));
       }
 
       if (food_id instanceof Array) {
         for (const id of food_id) {
-          const foodInfo = await foodGenericsModel.getbyId(id);
+          const foodInfo = await foodGenericsModel.findbyId(id);
           await mealModel.upadteMealCalories(meal_id, Number((mealCurrentCalories + foodInfo[0].kcal).toFixed(2)));
         }
       }

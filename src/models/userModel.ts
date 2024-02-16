@@ -1,6 +1,6 @@
 import BaseModel from "./baseModel";
-import type { User } from "../interfaces/iUsers";
-import { ResultSetHeader } from "mysql2/promise";
+import type { User } from "../interfaces/iUser";
+import type { ResultSetHeader } from "mysql2/promise";
 
 export default class UserModel extends BaseModel {
 
@@ -10,6 +10,10 @@ export default class UserModel extends BaseModel {
 
   public async findById(id: string): Promise<ResultSetHeader[]> {
     return await this.execute("SELECT id, name, email, isPremium FROM users where id = ?", id);
+  }
+
+  public async findByEmail(email: string): Promise<ResultSetHeader[]> {
+    return await this.execute("SELECT id, name, email, isPremium, password FROM users where email = ?", email);
   }
 
   public async createUser({ name, email, password, isPremium }: User): Promise<ResultSetHeader[]> {
@@ -23,7 +27,7 @@ export default class UserModel extends BaseModel {
     return await this.execute("DELETE FROM users WHERE id = ?", id);
   }
 
-  async updateUser(id: string, { email, name, isPremium }: Partial<User>): Promise<ResultSetHeader[]> {
+  public async updateUser(id: string, { email, name, isPremium }: Partial<User>): Promise<ResultSetHeader[]> {
     return await this.execute(
       "UPDATE users SET name = IFNULL(?, name), email = IFNULL(?, email), isPremium = IFNULL(?, isPremium) WHERE id = ?",
       name ?? null, email ?? null, isPremium ?? null, id
