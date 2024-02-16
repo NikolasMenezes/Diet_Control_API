@@ -41,5 +41,4 @@ router.put("/meal/:id", jwtValidationMiddleware, verifyMealFields, mealControlle
 router.delete("/meal/:id", jwtValidationMiddleware, mealController.deleteMealById)
 router.delete("/meal/:meal_id/food/:food_id", jwtValidationMiddleware, mealController.deleteFoodFromMeal)
 
-
 export default router

@@ -3,97 +3,78 @@ import type { Meal } from "../interfaces/iMeal";
 import type { ResultSetHeader } from "mysql2/promise";
 
 export default class MealModel extends BaseModel {
-  // public async createMeal(meal: Meal, foods_id: number[]): Promise<number> {
-  //   try {
-  //     const { name, description, calories, user_id } = meal;
 
-  //     const createMealQuery = "INSERT INTO meals(name, description, calories, user_id) VALUES (?, ?, ?, ?)";
+  public async addFoodToMeal(meal_id: number | string, food_id: number[]): Promise<void> {
+    try {
+      for (const food of food_id) {
+        await this.execute("INSERT INTO meals_foods(meal_id, food_id) VALUES (?, ?)", meal_id, food);
+      }
+    } catch (e: any) {
+      throw e;
+    }
+  }
 
-  //     const newMeal = await connection.execute(createMealQuery, [
-  //       name,
-  //       description,
-  //       calories,
-  //       user_id
-  //     ]) as ResultSetHeader[];
+  private async getFoodsFromMeal(meal_id: number | string): Promise<ResultSetHeader[]> {
+    try {
+      const query = `
+        SELECT fg.*
+        FROM meals_foods mf
+        INNER JOIN food_generics fg ON mf.food_id = fg.id
+        WHERE mf.meal_id = ?
+      `;
 
-  //     const meal_id = newMeal[0].insertId;
+      return await this.execute(query, meal_id);
+    } catch (e: any) {
+      console.error(e.message);
+      throw e;
+    }
+  }
 
-  //     for (const id of foods_id) {
-  //       await this.addFoodToMeal(meal_id, id);
-  //     }
+  public async createMeal({ name, description, calories, user_id }: Meal, foods_id: number[]): Promise<void> {
+    try {
+      const newMeal = await this.execute(
+        "INSERT INTO meals(name, description, calories, user_id) VALUES (?, ?, ?, ?)",
+        name,
+        description,
+        calories,
+        user_id
+      );
 
-  //     return meal_id;
-  //   } catch (e: any) {
-  //     console.error(e.message);
-  //     throw e;
-  //   }
-  // }
+      const meal_id = newMeal[0].insertId;
 
-  // private async addFoodToMeal(meal_id: number | string, food_id: number | number[]): Promise<boolean> {
-  //   try {
-  //     const query = "INSERT INTO meals_foods (meal_id, food_id) VALUES (?, ?)";
-  //     if (typeof food_id === 'number') {
-  //       await connection.execute(query, [meal_id, food_id]);
-  //     }
-  //     else {
-  //       for (const id of food_id) {
-  //         await connection.execute(query, [meal_id, id]);
-  //       }
-  //     }
-  //     return true;
-  //   } catch (e: any) {
-  //     console.error(e.message);
-  //     throw e;
-  //   }
-  // }
+      await this.addFoodToMeal(meal_id, foods_id);
+    } catch (e: any) {
+      throw e;
+    }
+  }
 
-  // public async getMealsByUserId(user_id: number | string): Promise<ResultSetHeader[]> {
-  //   try {
-  //     const query = "SELECT id, name, description, calories FROM meals WHERE user_id = ?";
-  //     const [meals] = await connection.execute(query, [user_id]) as any[];
+  public async getMealsByUserId(user_id: number | string): Promise<ResultSetHeader[]> {
+    try {
+      const query = "SELECT id, name, description, calories FROM meals WHERE user_id = ?";
+      const meals = await this.execute(query, user_id) as any[];
 
-  //     for (const meal of meals) {
-  //       const foods = await this.getFoodsFromMeal(meal.id);
-  //       meal.foods = foods;
-  //     }
+      for (const meal of meals) {
+        const foods = await this.getFoodsFromMeal(meal.id);
+        meal.foods = foods;
+      }
+      return meals;
+    } catch (e: any) {
+      console.error(e.message);
+      throw e;
+    }
+  }
 
-  //     return meals;
 
-  //   } catch (e: any) {
-  //     console.error(e.message);
-  //     throw e;
-  //   }
-  // }
+  public async getMealById(meal_id: number | string): Promise<ResultSetHeader[]> {
+    const query = "SELECT name, description, calories FROM meals WHERE id = ?";
 
-  // private async getFoodsFromMeal(meal_id: number | string): Promise<ResultSetHeader[]> {
-  //   try {
-  //     const query = "SELECT food_id FROM meals_foods WHERE meal_id = ?";
+    const meal = await this.execute(query, meal_id) as any[];
 
-  //     const [foods_ids] = await connection.execute(query, [meal_id]) as any[];
+    const foods = await this.getFoodsFromMeal(meal_id);
+    meal[0].foods = foods;
 
-  //     const foodInfo = []
-
-  //     for (const food of foods_ids) {
-  //       const [food_info] = await connection.execute("SELECT * FROM food_generics WHERE id = ?", [food.food_id]) as any[];
-  //       foodInfo.push(food_info[0]);
-  //     }
-  //     return foodInfo as ResultSetHeader[];
-  //   } catch (e: any) {
-  //     console.error(e.message);
-  //     throw e;
-  //   }
-  // }
-
-  // public async getMealById(meal_id: number | string): Promise<ResultSetHeader> {
-  //   const query = "SELECT name, description, calories FROM meals WHERE id = ?";
-
-  //   const [meal] = await connection.execute(query, [meal_id]) as any[];
-
-  //   const foods = await this.getFoodsFromMeal(meal_id);
-  //   meal[0].foods = foods;
-
-  //   return meal[0];
-  // }
+    return meal[0];
+  }
 
   public async deleteMeal(meal_id: number | string): Promise<ResultSetHeader[]> {
     return await this.execute("DELETE FROM meals WHERE id = ?", meal_id);

@@ -11,18 +11,11 @@ type MealWithFood = Meal & { foods_id: number[] };
 
 class MealController {
 
-  async postMeal(req: Request, res: Response) {
+  public async postMeal(req: Request, res: Response) {
     try {
       const { description, name, foods_id, user_id }: MealWithFood = req.body;
 
-      const foodsInfo = [];
-
-      for (const id of foods_id) {
-        const [food] = await foodGenericsModel.findbyId(id);
-        foodsInfo.push(food)
-      }
-
-      const calories = calcuteMealCalories(foodsInfo);
+      const calories = await this.calcuteMealCalories(foods_id);
 
       const newMeal = await mealModel.createMeal({ user_id, name, description, calories }, foods_id);
 
@@ -32,7 +25,7 @@ class MealController {
     }
   }
 
-  async getMealsUserId(req: Request, res: Response) {
+  public async getMealsUserId(req: Request, res: Response) {
     try {
       const { user_id } = req.body;
 
@@ -44,7 +37,7 @@ class MealController {
     }
   }
 
-  async getMealById(req: Request, res: Response) {
+  public async getMealById(req: Request, res: Response) {
     try {
       const id = req.params.id;
 
@@ -56,7 +49,7 @@ class MealController {
     }
   }
 
-  async deleteMealById(req: Request, res: Response) {
+  public async deleteMealById(req: Request, res: Response) {
     try {
       const id = req.params.id;
 
@@ -68,7 +61,7 @@ class MealController {
     }
   }
 
-  async putMeal(req: Request, res: Response) {
+  public async putMeal(req: Request, res: Response) {
     try {
       const { description, name }: Meal = req.body;
       const id = req.params.id;
@@ -82,7 +75,7 @@ class MealController {
     }
   }
 
-  async deleteFoodFromMeal(req: Request, res: Response) {
+  public async deleteFoodFromMeal(req: Request, res: Response) {
     const foodId = req.params.food_id;
     const mealId = req.params.meal_id;
 
@@ -91,19 +84,21 @@ class MealController {
 
       const foodInfo = await foodGenericsModel.findbyId(foodId);
 
-      const mealCurrentCalories = await mealModel.getMealCalories(mealId);
+      const [mealCurrentCalories] = await mealModel.getMealCalories(mealId) as any[];
 
-      console.log(mealCurrentCalories, foodInfo[0].kcal)
-
-      await mealModel.upadteMealCalories(mealId, Number((mealCurrentCalories + (foodInfo[0].kcal * -1)).toFixed(2)));
+      await mealModel.upadteMealCalories(
+        mealId,
+        Number((mealCurrentCalories.calories + (foodInfo[0].kcal * -1)).toFixed(2))
+      );
 
       return res.status(200).json({ 'Status': 'Food deleted from meal successfully!' });
-    } catch (e) {
+    } catch (e: any) {
+      console.log("erro", e.message)
       return res.status(500).json({ 'Status': "Internal server Error!" });
     }
   }
 
-  async addFoodToMeal(req: Request, res: Response) {
+  public async addFoodToMeal(req: Request, res: Response) {
     try {
       const meal_id = req.params.id;
       const { food_id } = req.body;
@@ -112,22 +107,28 @@ class MealController {
 
       const mealCurrentCalories = await mealModel.getMealCalories(meal_id);
 
-      if (typeof food_id === 'number') {
-        const foodInfo = await foodGenericsModel.findbyId(food_id);
-        await mealModel.upadteMealCalories(meal_id, Number((mealCurrentCalories + foodInfo[0].kcal).toFixed(2)));
+      for (const id of food_id) {
+        const foodInfo = await foodGenericsModel.findbyId(id);
+        await mealModel.upadteMealCalories(
+          meal_id,
+          Number((mealCurrentCalories + foodInfo[0].kcal).toFixed(2))
+        );
       }
-
-      if (food_id instanceof Array) {
-        for (const id of food_id) {
-          const foodInfo = await foodGenericsModel.findbyId(id);
-          await mealModel.upadteMealCalories(meal_id, Number((mealCurrentCalories + foodInfo[0].kcal).toFixed(2)));
-        }
-      }
-
       return res.status(200).json({ 'Status': 'Food added to meal successfully!' });
     } catch (e) {
       return res.status(500).json({ 'Status': "Internal server Error!" });
     }
+  }
+
+  private async calcuteMealCalories(foods_id: number[]): Promise<number> {
+    const foodsInfo = [];
+
+    for (const id of foods_id) {
+      const [food] = await foodGenericsModel.findbyId(id);
+      foodsInfo.push(food)
+    }
+
+    return calcuteMealCalories(foodsInfo);
   }
 
 }
