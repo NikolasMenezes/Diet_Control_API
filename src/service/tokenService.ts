@@ -1,4 +1,5 @@
 import { Secret, sign, verify } from 'jsonwebtoken'
+import { SECRET_KEY } from '../constants'
 
 export default class TokenService {
 
@@ -6,7 +7,7 @@ export default class TokenService {
     return sign(payload, secretKey, { expiresIn: '100000000000000000h' })
   }
 
-  getTokenInfo(token: string, secretKey: Secret) {
+  getTokenInfo(token: string, secretKey: Secret = SECRET_KEY) {
     return verify(token, secretKey, (err, decoded) => {
       if (!err) {
         return decoded

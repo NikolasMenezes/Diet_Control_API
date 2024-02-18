@@ -2,9 +2,11 @@ import UserModel from "../models/userModel";
 import AuthService from "../service/authService";
 import { Request, Response } from "express";
 import { User } from "../interfaces/iUser";
+import TokenService from "../service/tokenService";
 
 const userModel = new UserModel();
 const authService = new AuthService();
+const tokenService = new TokenService();
 
 class UserController {
   async postUser(req: Request, res: Response) {
@@ -65,6 +67,18 @@ class UserController {
       await userModel.deleteUser(id);
 
       return res.status(200).json([]);
+    } catch (e: any) {
+      return res.status(500).json({ 'Status': "Internal server Error!" });
+    }
+  }
+
+  public async getUserInfo(req: Request, res: Response) {
+    try {
+      const token = (req.headers.authorization)?.split(' ')[1];
+
+      if(!token) return res.status(401).json({ 'Status': "Unauthorized!" });
+
+      return res.status(200).json(tokenService.getTokenInfo(token));
     } catch (e: any) {
       return res.status(500).json({ 'Status': "Internal server Error!" });
     }

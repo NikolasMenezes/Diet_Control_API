@@ -13,6 +13,7 @@ import { verifyMealFields } from "./middleware/mealsMiddleware";
 const router = express.Router()
 
 // User
+router.get('/user', jwtValidationMiddleware, userController.getUserInfo)
 router.get('/user/all', jwtValidationMiddleware, userController.getUsers)
 router.get('/user/:id', jwtValidationMiddleware, userController.getUserById)
 router.post('/user', userMiddleware, userController.postUser)

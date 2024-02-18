@@ -15,22 +15,27 @@ type Login = { email: string, password: string }
 class LoginController {
   public async login(req: Request, res: Response) {
     try {
-      const { email, password }: Login = req.body;
-      const userInfo = await userModel.findByEmail(email);
+      const body: Login = req.body;
+      const userInfo = await userModel.findByEmail(body.email);
 
-      if (!userInfo) {
-        return res.status(401).json({ status: "Unauthorized" });
-      }
-      const hashPassword = (userInfo[0] as unknown as User).password;
+      if (!userInfo[0]) return res.status(401).json({ status: "Unauthorized" });
+      
+      const { id, name, email, isPremium, password } = (userInfo[0] as unknown as User);
 
-      const passwordIsCorrect = await authService.verifyPassword(password, hashPassword);
+      const passwordIsCorrect = await authService.verifyPassword(body.password, password);
 
       if (!passwordIsCorrect) {
         return res.status(401).json({ status: "Unauthorized" });
       }
-      const token = await tokenService.generate({ email, password }, String(SECRET_KEY));
-      const tokenExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getTime();
+      const payload = {
+        id,
+        name,
+        email,
+        isPremium: new Boolean(isPremium)
+      }
 
+      const token = await tokenService.generate(payload, String(SECRET_KEY));
+      const tokenExpiration = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getTime();
 
       return res.status(200).json({ status: "success", token, expiresIn: tokenExpiration });
     } catch (e: any) {
