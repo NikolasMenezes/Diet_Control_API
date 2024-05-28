@@ -1,9 +1,10 @@
-FROM ubuntu
-FROM node:20
+FROM node:20-alpine
 
 WORKDIR /app
 
-RUN apt update && apt upgrade -y
+ENV DATABASE_URL=mysql://root:root@localhost:3306/diet_control
+ENV SECRET_KEY=mysecret_PAssword
+ENV APP_PORT=3408
 
 COPY package*.json ./
 
