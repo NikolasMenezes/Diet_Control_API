@@ -1,15 +1,21 @@
-FROM node:20-alpine
+FROM node:20-alpine3.20
 
 WORKDIR /app
 
-ENV DATABASE_URL=mysql://root:root@localhost:3306/diet_control
-ENV SECRET_KEY=mysecret_PAssword
-ENV APP_PORT=3408
+COPY package.json /app/
 
-COPY package*.json ./
+RUN npm install -g pnpm
 
-RUN npm install
+COPY pnpm-lock.yaml /app/
+
+RUN pnpm install --silent
 
 COPY . .
 
-CMD [ "npm", "run", "dev"]
+RUN chown -R node:node /app
+
+USER node
+
+EXPOSE 3000
+
+CMD [ "pnpm", "dev"]
