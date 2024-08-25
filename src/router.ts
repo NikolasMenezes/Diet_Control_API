@@ -2,7 +2,7 @@ import express from 'express';
 import { userMiddleware } from './middleware/user.middleware';
 import { userController } from './modules/user/user.controller';
 import { userBasicInfoController } from './modules/user-info/user-basic-info.controller';
-import { LoginController } from './modules/auth/auth.controller';
+import { loginController } from './modules/auth/auth.controller';
 import { jwtValidationMiddleware } from './middleware/jwt.middleware';
 import { foodGenericsController } from './modules/food-generics/food-generics.controller';
 import { validateSentGroup } from './middleware/food-generics.middleware';
@@ -39,7 +39,7 @@ router.patch(
 );
 
 // Login
-router.post('/login', new LoginController().login);
+router.post('/login', loginController.login);
 
 // Food Generics
 router.get('/food/all', jwtValidationMiddleware, foodGenericsController.getAll);
@@ -91,4 +91,4 @@ router.delete(
   mealController.deleteFoodFromMeal,
 );
 
-export default router;
+export { router };

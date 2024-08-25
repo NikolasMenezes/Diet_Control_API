@@ -3,7 +3,7 @@ import type { ResultSetHeader } from 'mysql2/promise';
 import { User } from './entity/user';
 
 export class UserRepository extends BaseRepository {
-  public async selectUsers(): Promise<ResultSetHeader[]> {
+  public async selectUsers() {
     return await this.execute('SELECT id, name, email, isPremium FROM users');
   }
 
@@ -21,12 +21,7 @@ export class UserRepository extends BaseRepository {
     );
   }
 
-  public async createUser({
-    name,
-    email,
-    password,
-    isPremium,
-  }: User): Promise<ResultSetHeader[]> {
+  public async createUser({ name, email, password, isPremium }: User) {
     return await this.execute(
       'INSERT INTO users(name, email, password, isPremium) VALUES (?, ?, ?, ?)',
       name,
@@ -43,7 +38,7 @@ export class UserRepository extends BaseRepository {
   public async updateUser(
     id: string,
     { email, name, isPremium }: Partial<User>,
-  ): Promise<ResultSetHeader[]> {
+  ) {
     return await this.execute(
       'UPDATE users SET name = IFNULL(?, name), email = IFNULL(?, email), isPremium = IFNULL(?, isPremium) WHERE id = ?',
       name ?? null,

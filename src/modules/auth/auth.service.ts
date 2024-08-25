@@ -1,14 +1,8 @@
 import { UserRepository } from '@modules/user/user.repository';
 import { LoginDto } from './dto/login.dto';
-import { HashService } from '@common/service/hash.service';
-import { TokenService } from '@common/service/token.service';
 
 export class AuthService {
-  constructor(
-    private readonly userRepository: UserRepository,
-    private readonly hashService: HashService,
-    private readonly tokenService: TokenService,
-  ) {
+  constructor(private readonly userRepository: UserRepository) {
     this.userRepository = userRepository;
   }
 
