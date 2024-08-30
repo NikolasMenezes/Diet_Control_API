@@ -1,13 +1,13 @@
 import express from 'express';
 import { userMiddleware } from './middleware/user.middleware';
-import { userController } from './modules/user/user.controller';
-import { userBasicInfoController } from './modules/user-info/user-basic-info.controller';
-import { loginController } from './modules/auth/auth.controller';
+import { userController } from '@modules/user/user.controller';
+import { userBasicInfoController } from '@modules/user-info/user-basic-info.controller';
+import { loginController } from '@modules/auth/auth.controller';
 import { jwtValidationMiddleware } from './middleware/jwt.middleware';
-import { foodGenericsController } from './modules/food-generics/food-generics.controller';
+import { foodGenericsController } from '@modules/food-generics/food-generics.controller';
 import { validateSentGroup } from './middleware/food-generics.middleware';
 import { verifyUserBasicInfoFields } from './middleware/user-basic-info.middleware';
-import { mealController } from './modules/meal/meal.controller';
+import { mealController } from '@modules/meal/meal.controller';
 import { verifyMealFields } from './middleware/meals.middleware';
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.post('/user', userMiddleware, userController.postUser);
 router.patch('/user/:id', jwtValidationMiddleware, userController.updateUser);
 router.delete('/user/:id', jwtValidationMiddleware, userController.deleteUser);
 
-// User Basic informations
+// User Basic information
 router.get(
   '/user/info/:id',
   jwtValidationMiddleware,

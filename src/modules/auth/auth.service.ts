@@ -9,8 +9,6 @@ export class AuthService {
   public async login({ email }: LoginDto) {
     const [user] = await this.userRepository.findByEmail(email);
 
-    console.log(user);
-
     return { status: 'ok' };
 
     //   if (!userInfo[0]) return res.status(401).json({ status: 'Unauthorized' });

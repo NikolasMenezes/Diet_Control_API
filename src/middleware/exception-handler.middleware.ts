@@ -8,6 +8,7 @@ export function exceptionHandler(
   res: Response,
   next: NextFunction,
 ) {
+  console.error(err);
   const code = err instanceof HttpException ? Number(err.code) : 500;
   const message =
     err instanceof HttpException ? err.message : 'Internal Server Error';

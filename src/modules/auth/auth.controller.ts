@@ -16,7 +16,7 @@ export class LoginController {
     } catch (error) {
       if (error instanceof ZodError) {
         const requiredFields = error.issues.map((field) => field.path);
-
+        // TODO: create global zod error filter
         throw new BadRequestException(
           `the field(s) ${requiredFields.join(' ')} is/are required`,
         );

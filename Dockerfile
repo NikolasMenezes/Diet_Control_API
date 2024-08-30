@@ -8,7 +8,7 @@ RUN npm install -g pnpm
 
 COPY pnpm-lock.yaml /app/
 
-RUN pnpm install --silent
+RUN pnpm install
 
 COPY . .
 
